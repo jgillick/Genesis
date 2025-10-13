@@ -59,8 +59,13 @@ class Go2Env:
         self.base_init_quat = torch.tensor(self.env_cfg["base_init_quat"], device=gs.device)
         self.inv_base_init_quat = inv_quat(self.base_init_quat)
         self.robot = self.scene.add_entity(
-            gs.morphs.URDF(
-                file="urdf/go2/urdf/go2.urdf",
+            # gs.morphs.URDF(
+            #     file="urdf/go2/urdf/go2.urdf",
+            #     pos=self.base_init_pos.cpu().numpy(),
+            #     quat=self.base_init_quat.cpu().numpy(),
+            # ),
+            gs.morphs.MJCF(
+                file="./model/go2.xml",
                 pos=self.base_init_pos.cpu().numpy(),
                 quat=self.base_init_quat.cpu().numpy(),
             ),
@@ -181,6 +186,10 @@ class Go2Env:
             ],
             axis=-1,
         )
+        if torch.isnan(self.obs_buf).any():
+            raise ValueError(f"ERROR: (step) NaN observation received! Actions: {self.obs_buf}")
+        elif torch.isinf(self.obs_buf).any():
+            raise ValueError(f"ERROR: (step) Infinite actions received! Actions: {self.obs_buf}")
 
         self.last_actions[:] = self.actions[:]
         self.last_dof_vel[:] = self.dof_vel[:]
