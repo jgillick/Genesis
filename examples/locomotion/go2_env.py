@@ -187,9 +187,9 @@ class Go2Env:
             axis=-1,
         )
         if torch.isnan(self.obs_buf).any():
-            raise ValueError(f"ERROR: (step) NaN observation received! Actions: {self.obs_buf}")
+            raise ValueError(f"ERROR: (step) NaN observation received: {self.obs_buf}")
         elif torch.isinf(self.obs_buf).any():
-            raise ValueError(f"ERROR: (step) Infinite actions received! Actions: {self.obs_buf}")
+            raise ValueError(f"ERROR: (step) Infinite actions received: {self.obs_buf}")
 
         self.last_actions[:] = self.actions[:]
         self.last_dof_vel[:] = self.dof_vel[:]
